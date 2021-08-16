@@ -25,6 +25,7 @@ public class ItemDAO implements IItemDAO{
                 currentSession.createQuery("from Item");
 
         List<Item> items = theQuery.getResultList();
+        System.out.println(2323);
         return items;
     }
 

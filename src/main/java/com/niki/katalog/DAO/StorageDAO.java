@@ -1,5 +1,6 @@
 package com.niki.katalog.DAO;
 
+import com.niki.katalog.entity.Item;
 import com.niki.katalog.entity.Storage;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,24 @@ public class StorageDAO implements IStorageDAO {
     Session currentSession = entityManager.unwrap(Session.class);
     Query query = currentSession.createQuery("from Storage where name = :paramName");
     query.setParameter("paramName", storageName);
-    Storage storage = (Storage) query.getSingleResult();
-    currentSession.delete(storage);
+    Storage recievedStorage = (Storage) query.getSingleResult();
+    //Заменяеи на значение по умолчанию
+    //Достаём предмет
+    query = currentSession.createQuery("from Item where storage.id = :recievedStorageId");
+    query.setParameter("recievedStorageId", recievedStorage.getId());
+    List<Item> items = query.getResultList();
+    //На случай, если содержаться предметы в данном хранилище
+    if(items.size() != 0) {
+      for(Item item : items) {
+        //Достаём значение по умолчанию для хранилища и делаем ссылку
+        query = currentSession.createQuery("from Storage  where id = -1");
+        Storage defaultStorage = (Storage) query.getSingleResult();
+        item.setStorage(defaultStorage);
+        currentSession.update(item);
+      }
+    }
+    //Удаляем хранилище
+    currentSession.delete(recievedStorage);
   }
 
   @Override

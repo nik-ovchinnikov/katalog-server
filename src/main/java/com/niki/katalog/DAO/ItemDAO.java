@@ -25,7 +25,6 @@ public class ItemDAO implements IItemDAO{
                 currentSession.createQuery("from Item");
 
         List<Item> items = theQuery.getResultList();
-
         return items;
     }
 
@@ -44,7 +43,7 @@ public class ItemDAO implements IItemDAO{
             deletedItem.setIncomeDate(item.getIncomeDate());
             deletedItem.setKey(item.getKey());
             deletedItem.setName(item.getName());
-            deletedItem.setStorageName(item.getStorageName());
+            deletedItem.setStorageName("Test####");
             //deletedItem.setTypeName(item.getItemType());
             deletedItem.setTypeName("Test###");
         currentSession.save(deletedItem);
@@ -55,7 +54,7 @@ public class ItemDAO implements IItemDAO{
     @Override
     public void add(Item item) {
         Session currentSession = entityManager.unwrap(Session.class);
-        System.out.println(item);
+//        System.out.println(item);
 //        System.out.println(item.getItemType().getN);
 
         currentSession.save(item);
@@ -89,7 +88,7 @@ public class ItemDAO implements IItemDAO{
     @Override
     public List<Item> getItemsByStorage(String storageName) {
         Session currentSession = entityManager.unwrap(Session.class);
-        Query query = currentSession.createQuery("from Item where StorageName= :paramName");
+        Query query = currentSession.createQuery("from Item where storage.name= :paramName");
         query.setParameter("paramName", storageName);
         List<Item> items = query.getResultList();
         System.out.println(items);

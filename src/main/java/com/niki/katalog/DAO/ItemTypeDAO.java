@@ -1,5 +1,6 @@
 package com.niki.katalog.DAO;
 
+import com.niki.katalog.entity.Item;
 import com.niki.katalog.entity.ItemType;
 import com.niki.katalog.entity.Storage;
 import org.hibernate.Session;
@@ -35,8 +36,24 @@ public class ItemTypeDAO implements IITemTypeDAO {
         Session currentSession = entityManager.unwrap(Session.class);
         Query query = currentSession.createQuery("from ItemType where name = :paramName");
         query.setParameter("paramName", typeName);
-        ItemType itemType= (ItemType) query.getSingleResult();
-        currentSession.delete(itemType);
+        ItemType itemTypeToDelete= (ItemType) query.getSingleResult();
+        //Заменяеи на значение по умолчанию
+        //Достаём предмет
+        query = currentSession.createQuery("from Item where itemType.itemTypeId = :recievedId");
+        query.setParameter("recievedId", itemTypeToDelete.getId());
+        List<Item> items = query.getResultList();
+        //На случай, если содержаться предметы данного типа
+        if(items.size() != 0) {
+            for(Item item : items) {
+                //Достаём значение по умолчанию для типа и делаем ссылку
+                query = currentSession.createQuery("from ItemType where id = -1");
+                ItemType defaultType= (ItemType) query.getSingleResult();
+                item.setItemType(defaultType);
+                currentSession.update(item);
+            }
+        }
+
+        currentSession.delete(itemTypeToDelete);
     }
 
     @Override

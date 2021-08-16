@@ -1,10 +1,15 @@
 package com.niki.katalog.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name="storages")
-
 public class Storage {
 
   @Id
@@ -19,7 +24,9 @@ public class Storage {
   private String description;
 
 
-  public Storage(String name, String description) {
+
+  public Storage(int newId, String name, String description) {
+    this.id = newId;
     this.name = name;
     this.description = description;
   }

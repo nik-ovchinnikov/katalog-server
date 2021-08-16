@@ -1,5 +1,9 @@
 package com.niki.katalog.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
@@ -28,23 +32,23 @@ public class Item {
     @Column(name = "income_date")
     private String incomeDate;
 
-    @Column(name = "storage_name")
-    private String StorageName;
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "storage_name")
+    private Storage storage;
 
-//    @Column(name = "type_name")
-//    private String typeName;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "type_name")
     private ItemType itemType;
 
-    public Item(String name, String description, String imgPaths, String key, String incomeDate, String storageName, ItemType type) {
+    public Item(int newId, String name, String description, String imgPaths, String key, String incomeDate, Storage storage, ItemType type) {
         this.name = name;
         this.description = description;
         this.imgPaths = imgPaths;
         this.key = key;
         this.incomeDate = incomeDate;
-        StorageName = storageName;
+        this.storage = storage;
         this.itemType = type;
+        this.id = newId;
     }
 
     public Item() {
@@ -98,20 +102,20 @@ public class Item {
         this.incomeDate = incomeDate;
     }
 
-    public String getStorageName() {
-        return StorageName;
+    public Storage getStorage() {
+        return storage;
     }
 
-    public void setStorageName(String storageName) {
-        StorageName = storageName;
+    public void setStorage(Storage storage) {
+        this.storage = storage;
     }
 
     public ItemType getItemType() {
         return itemType;
     }
 
-    public void setItemType(ItemType typeName) {
-        this.itemType = typeName;
+    public void setItemType(ItemType itemType) {
+        this.itemType = itemType;
     }
 
     @Override
@@ -123,8 +127,8 @@ public class Item {
                 ", imgPaths='" + imgPaths + '\'' +
                 ", key='" + key + '\'' +
                 ", incomeDate='" + incomeDate + '\'' +
-                ", StorageName='" + StorageName + '\'' +
-                ", typeName='" + itemType + '\'' +
+                ", storage=" + storage.getName() +
+                ", itemType=" + itemType.getName() +
                 '}';
     }
 }

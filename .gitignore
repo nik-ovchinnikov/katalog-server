@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+###DB###
+src/main/resources/db/db.mv.db
+
+.gitignore

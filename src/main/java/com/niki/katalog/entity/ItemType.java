@@ -1,5 +1,10 @@
 package com.niki.katalog.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -18,16 +23,6 @@ public class ItemType {
     @Column(name="description")
     private String description;
 
-    @OneToMany(mappedBy = "itemType", cascade = CascadeType.ALL)
-    private List<Item> items;
-
-    public List<Item> getItem() {
-        return items;
-    }
-
-    public void setItem(List<Item> item) {
-        this.items = item;
-    }
 
 
     public ItemType(int id, String name, String description) {
@@ -65,11 +60,10 @@ public class ItemType {
 
     @Override
     public String toString() {
-        return "\nItemType{" +
-                "id=" + itemTypeId +
+        return "ItemType{" +
+                "itemTypeId=" + itemTypeId +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", Item ='" + items + '\'' +
                 '}';
     }
 }

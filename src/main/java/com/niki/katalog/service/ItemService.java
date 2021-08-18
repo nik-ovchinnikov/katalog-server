@@ -38,7 +38,6 @@ public class ItemService implements  IItemService{
     @Override
     @Transactional
     public int getIdByKey(String key) {
-        System.out.println("123412");
         return dao.getIdByKey(key);
     }
 

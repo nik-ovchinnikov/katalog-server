@@ -2,21 +2,39 @@ package com.niki.katalog.DAO;
 
 import com.niki.katalog.entity.DeletedItem;
 import com.niki.katalog.entity.Item;
+import com.niki.katalog.entity.ItemPicture;
+import com.niki.katalog.service.FileStorageService;
+import com.niki.katalog.service.ItemPictureService;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.io.File;
 import java.util.List;
 
 @Repository
 public class ItemDAO implements IItemDAO{
 
     private EntityManager entityManager;
+    private ItemPictureService itemPictureService;
+    private FileStorageService fileStorageService;
 
     @Autowired
-    public ItemDAO(EntityManager theEntityManager){entityManager = theEntityManager;}
+    public ItemDAO(
+            EntityManager theEntityManager,
+            ItemPictureService theItemPictureService,
+            FileStorageService theFileStorageService
+    ){
+        entityManager = theEntityManager;
+        itemPictureService = theItemPictureService;
+        fileStorageService = theFileStorageService;
+    }
+
+    @Autowired
+    public ItemPictureRepository itemPictureRepository;
 
     @Override
     public List<Item> findAll() {
@@ -35,7 +53,7 @@ public class ItemDAO implements IItemDAO{
         Query query = currentSession.createQuery("from Item where key = :paramName");
         query.setParameter("paramName", itemKey);
         Item item = (Item) query.getSingleResult();
-        System.out.println(item);
+
         //Запись в таблицу для удалённых
         DeletedItem deletedItem = new DeletedItem();
             deletedItem.setId(item.getId());
@@ -44,10 +62,20 @@ public class ItemDAO implements IItemDAO{
             deletedItem.setIncomeDate(item.getIncomeDate());
             deletedItem.setKey(item.getKey());
             deletedItem.setName(item.getName());
-            deletedItem.setStorageName("Test####");
-            //deletedItem.setTypeName(item.getItemType());
-            deletedItem.setTypeName("Test###");
+            deletedItem.setStorageName(item.getStorage().getName());
+            deletedItem.setTypeName(item.getItemType().getName());
         currentSession.save(deletedItem);
+
+        //Удаляем картинки и данные о картинках
+        List<ItemPicture> itemPicturesToDelete = itemPictureService.getByItemKey(item.getId());
+        for (ItemPicture itemPicture: itemPicturesToDelete) {
+            //удаляеи данные о картинках
+            itemPictureService.delete(itemPicture.getId());
+
+            //удаляем картинки
+            File fileToDelete = new File(fileStorageService.getStorageRoot(), itemPicture.getName());
+            fileToDelete.delete();
+        }
 
         currentSession.delete(item);
     }
@@ -55,9 +83,11 @@ public class ItemDAO implements IItemDAO{
     @Override
     public void add(Item item) {
         Session currentSession = entityManager.unwrap(Session.class);
-//        System.out.println(item);
-//        System.out.println(item.getItemType().getN);
-
+        //Запись данных о картинках
+        for (ItemPicture picture: item.getItemPicture()) {
+            picture.setItem(item);
+            itemPictureService.addItemPicture(picture);
+        }
         currentSession.save(item);
     }
 
@@ -75,7 +105,7 @@ public class ItemDAO implements IItemDAO{
         Query query = currentSession.createQuery("from Item where key = :paramName");
         query.setParameter("paramName", key);
         Item item = (Item) query.getSingleResult();
-        System.out.println(item);
+
         return item.getId();
     }
 
@@ -83,6 +113,13 @@ public class ItemDAO implements IItemDAO{
     public Item find(int id) {
         Session currentSession = entityManager.unwrap(Session.class);
         Item item = currentSession.get(Item.class, id);
+
+        //Забираем данные о фотографиях предмета
+        List<ItemPicture> itemPicturesToReturn = itemPictureService.getByItemKey(item.getId());
+        item.setItemPicture(itemPicturesToReturn);
+
+        //Вернуть фотографии
+
         return item;
     }
 
@@ -92,7 +129,14 @@ public class ItemDAO implements IItemDAO{
         Query query = currentSession.createQuery("from Item where storage.name= :paramName");
         query.setParameter("paramName", storageName);
         List<Item> items = query.getResultList();
-        System.out.println(items);
+
+        //Забрать данные о фотографиях для каждого предмета
+        for (Item item: items) {
+            List<ItemPicture> itemPicturesToReturn = itemPictureService.getByItemKey(item.getId());
+            item.setItemPicture(itemPicturesToReturn);
+        }
+        //Вернуть фотографии
+
         return items;
     }
 
@@ -102,7 +146,14 @@ public class ItemDAO implements IItemDAO{
         Query query = currentSession.createQuery("from Item where itemType.name = :paramName");
         query.setParameter("paramName", typeName);
         List<Item> items = query.getResultList();
-        System.out.println(items);
+
+        //Забрать данные о фотографиях для каждого предмета
+        for (Item item: items) {
+            List<ItemPicture> itemPicturesToReturn = itemPictureService.getByItemKey(item.getId());
+            item.setItemPicture(itemPicturesToReturn);
+        }
+        //Вернуть фотографии
+
         return items;
     }
 }

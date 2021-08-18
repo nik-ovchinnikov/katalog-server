@@ -1,12 +1,11 @@
 package com.niki.katalog.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 
 import javax.persistence.*;
+import java.io.File;
+import java.sql.Blob;
+import java.util.List;
 
 @Entity
 @Table(name="items")
@@ -40,16 +39,25 @@ public class Item {
     @JoinColumn(name = "type_name")
     private ItemType itemType;
 
-    public Item(int newId, String name, String description, String imgPaths, String key, String incomeDate, Storage storage, ItemType type) {
+
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "item"
+            )
+    private List<ItemPicture> itemPicture;
+
+    public Item(int id, String name, String description, String imgPaths, String key, String incomeDate, Storage storage, ItemType itemType, List<ItemPicture> itemPicture) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.imgPaths = imgPaths;
         this.key = key;
         this.incomeDate = incomeDate;
         this.storage = storage;
-        this.itemType = type;
-        this.id = newId;
+        this.itemType = itemType;
+        this.itemPicture = itemPicture;
     }
+
 
     public Item() {
     }
@@ -116,6 +124,14 @@ public class Item {
 
     public void setItemType(ItemType itemType) {
         this.itemType = itemType;
+    }
+
+    public List<ItemPicture> getItemPicture() {
+        return itemPicture;
+    }
+
+    public void setItemPicture(List<ItemPicture> itemPicture) {
+        this.itemPicture = itemPicture;
     }
 
     @Override

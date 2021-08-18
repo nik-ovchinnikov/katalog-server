@@ -20,7 +20,6 @@ public class ItemController {
 
     @PostMapping("/addItem")
     public Item addItem(@RequestBody Item item) {
-        System.out.println("Success");
         item.setId(0);
         service.add(item);
         return item;
@@ -42,7 +41,7 @@ public class ItemController {
     }
 
     @DeleteMapping("/deleteItem/{itemKey}")
-    public void deleteStorage(@PathVariable String itemKey) {
+    public void deleteItem(@PathVariable String itemKey) {
         service.delete(itemKey);
     }
 

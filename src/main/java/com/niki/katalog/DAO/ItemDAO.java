@@ -3,6 +3,7 @@ package com.niki.katalog.DAO;
 import com.niki.katalog.entity.DeletedItem;
 import com.niki.katalog.entity.Item;
 import com.niki.katalog.entity.ItemPicture;
+import com.niki.katalog.entity.ItemType;
 import com.niki.katalog.service.FileStorageService;
 import com.niki.katalog.service.ItemPictureService;
 import org.hibernate.Session;
@@ -43,7 +44,17 @@ public class ItemDAO implements IItemDAO{
                 currentSession.createQuery("from Item");
 
         List<Item> items = theQuery.getResultList();
-        System.out.println(2323);
+
+        //для каждого предмета привяжем ItemPicture
+        for(Item item: items) {
+
+            List<ItemPicture> itemPicturesToSend= itemPictureService.getByItemId(item.getId());
+            for (ItemPicture itemPicture: itemPicturesToSend) {
+                //Добавляем набор картинок
+                    item.getItemPicture().add(itemPicture);
+            }
+        }
+        
         return items;
     }
 
@@ -58,7 +69,6 @@ public class ItemDAO implements IItemDAO{
         DeletedItem deletedItem = new DeletedItem();
             deletedItem.setId(item.getId());
             deletedItem.setDescription(item.getDescription());
-            deletedItem.setImgPaths(item.getImgPaths());
             deletedItem.setIncomeDate(item.getIncomeDate());
             deletedItem.setKey(item.getKey());
             deletedItem.setName(item.getName());
@@ -67,10 +77,10 @@ public class ItemDAO implements IItemDAO{
         currentSession.save(deletedItem);
 
         //Удаляем картинки и данные о картинках
-        List<ItemPicture> itemPicturesToDelete = itemPictureService.getByItemKey(item.getId());
+        List<ItemPicture> itemPicturesToDelete = itemPictureService.getByItemId(item.getId());
         for (ItemPicture itemPicture: itemPicturesToDelete) {
             //удаляеи данные о картинках
-            itemPictureService.delete(itemPicture.getId());
+            itemPictureService.delete(itemPicture);
 
             //удаляем картинки
             File fileToDelete = new File(fileStorageService.getStorageRoot(), itemPicture.getName());
@@ -115,10 +125,8 @@ public class ItemDAO implements IItemDAO{
         Item item = currentSession.get(Item.class, id);
 
         //Забираем данные о фотографиях предмета
-        List<ItemPicture> itemPicturesToReturn = itemPictureService.getByItemKey(item.getId());
+        List<ItemPicture> itemPicturesToReturn = itemPictureService.getByItemId(item.getId());
         item.setItemPicture(itemPicturesToReturn);
-
-        //Вернуть фотографии
 
         return item;
     }
@@ -132,7 +140,7 @@ public class ItemDAO implements IItemDAO{
 
         //Забрать данные о фотографиях для каждого предмета
         for (Item item: items) {
-            List<ItemPicture> itemPicturesToReturn = itemPictureService.getByItemKey(item.getId());
+            List<ItemPicture> itemPicturesToReturn = itemPictureService.getByItemId(item.getId());
             item.setItemPicture(itemPicturesToReturn);
         }
         //Вернуть фотографии
@@ -149,11 +157,41 @@ public class ItemDAO implements IItemDAO{
 
         //Забрать данные о фотографиях для каждого предмета
         for (Item item: items) {
-            List<ItemPicture> itemPicturesToReturn = itemPictureService.getByItemKey(item.getId());
+            List<ItemPicture> itemPicturesToReturn = itemPictureService.getByItemId(item.getId());
             item.setItemPicture(itemPicturesToReturn);
         }
         //Вернуть фотографии
 
         return items;
+    }
+
+
+    @Override
+    public boolean isExistByKey(String itemKey) {
+        Session currentSession = entityManager.unwrap(Session.class);
+        Query<Item> theQuery =
+                currentSession.createQuery("from Item it where it.key = :curItemKey");
+        theQuery.setParameter("curItemKey", itemKey);
+        List<Item> items = theQuery.getResultList();
+        if(items.size() > 0) {
+            return true;
+        }else {
+            return false;
+        }
+
+    }
+
+    public boolean isExistByPhotoName(String photoName) {
+        Session currentSession = entityManager.unwrap(Session.class);
+        Query<ItemPicture> theQuery =
+                currentSession.createQuery("from ItemPicture ip where ip.name= :curPhotoName");
+        theQuery.setParameter("curPhotoName", photoName);
+        List<ItemPicture> itemPictures = theQuery.getResultList();
+        if(itemPictures.size() > 0) {
+            return true;
+        }else {
+            return false;
+        }
+
     }
 }

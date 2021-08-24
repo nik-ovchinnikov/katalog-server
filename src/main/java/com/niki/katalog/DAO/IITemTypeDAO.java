@@ -14,4 +14,6 @@ public interface IITemTypeDAO {
     public void update(ItemType newObject);
 
     public ItemType find(int id);
+
+    boolean isExistByName(String itemTypeName);
 }

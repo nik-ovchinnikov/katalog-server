@@ -1,21 +1,32 @@
 package com.niki.katalog.rest;
 
 import com.niki.katalog.entity.Item;
+import com.niki.katalog.entity.ItemPicture;
+import com.niki.katalog.service.ItemPictureService;
+import com.niki.katalog.service.ItemPictureServiceImpl;
 import com.niki.katalog.service.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/item")
 @CrossOrigin
 public class ItemController {
     private ItemService service;
+    private ItemPictureService itemPictureService;
+    private ItemPictureServiceImpl itemPictureServiceImpl;
 
     @Autowired
-    public ItemController(ItemService theService) {
-        service = theService;
+    public ItemController(ItemService service, ItemPictureService itemPictureService, ItemPictureServiceImpl itemPictureServiceImpl) {
+        this.service = service;
+        this.itemPictureService = itemPictureService;
+        this.itemPictureServiceImpl = itemPictureServiceImpl;
     }
 
     @PostMapping("/addItem")
@@ -31,11 +42,7 @@ public class ItemController {
     }
 
     @PutMapping("/updateItem")
-    public Item updateItem(@RequestBody Item newItem) {
-       // String newItemKey = newItem.getKey();
-//        int id= service.getIdByKey(newItemKey);
-//        newItem.setId(id);
-        System.out.println(newItem);
+    public Item updateItem(@RequestBody Item newItem) throws IOException {
         service.update(newItem);
         return newItem;
     }
@@ -58,6 +65,16 @@ public class ItemController {
     @GetMapping("getItemsByType/{typeName}")
     public List<Item> getItemByType(@PathVariable String typeName) {
         return service.getItemsByType(typeName);
+    }
+
+    @GetMapping("/keyIsExist/{itemKey}")
+    public boolean keyIsExistType(@PathVariable String itemKey) {
+        return  service.isExistByKey(itemKey);
+    }
+
+    @GetMapping("/photoNameIsExist/{photoName}")
+    public boolean photoNameIsExistType(@PathVariable String photoName) {
+        return  service.isExistByPhotoName(photoName);
     }
 
 }

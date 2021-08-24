@@ -14,4 +14,6 @@ public interface IStorageDAO {
     public void update(Storage newObject);
 
     public Storage find(int id);
+
+    boolean isExistByName(String itemTypeName);
 }

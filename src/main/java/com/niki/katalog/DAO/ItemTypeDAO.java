@@ -74,5 +74,20 @@ public class ItemTypeDAO implements IITemTypeDAO {
         ItemType itemType = currentSession.get(ItemType.class, id);
         return itemType;
     }
+
+    @Override
+    public boolean isExistByName(String itemTypeName) {
+        Session currentSession = entityManager.unwrap(Session.class);
+        Query<ItemType> theQuery =
+                currentSession.createQuery("from ItemType it where it.name = :curItemTypeName");
+        theQuery.setParameter("curItemTypeName", itemTypeName);
+        List<ItemType> itemTypes = theQuery.getResultList();
+        if(itemTypes.size() > 0) {
+           return true;
+        }else {
+           return false;
+        }
+
+    }
 }
 

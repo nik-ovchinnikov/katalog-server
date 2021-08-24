@@ -10,5 +10,5 @@ import java.util.List;
 public interface ItemPictureRepository extends JpaRepository<ItemPicture, Integer> {
 
     @Query("from ItemPicture ip where ip.item.id = :itemKey ")
-    List<ItemPicture> getByItemKey(@Param("itemKey") Integer theItemKey);
+    List<ItemPicture> getByItemId(@Param("itemKey") int theItemId);
 }

@@ -22,4 +22,5 @@ public interface IItemDAO {
 
     List<Item> getItemsByType(String typeName);
 
+    boolean isExistByKey(String itemKey);
 }

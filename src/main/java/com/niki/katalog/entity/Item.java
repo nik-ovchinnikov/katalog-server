@@ -1,5 +1,6 @@
 package com.niki.katalog.entity;
 
+import org.hibernate.annotations.CollectionType;
 import org.springframework.context.annotation.PropertySource;
 
 import javax.persistence.*;
@@ -22,9 +23,6 @@ public class Item {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "image_path")
-    private String imgPaths;
-
     @Column(name = "key")
     private String key;
 
@@ -39,10 +37,10 @@ public class Item {
     @JoinColumn(name = "type_name")
     private ItemType itemType;
 
-
     @OneToMany(
             fetch = FetchType.LAZY,
-            mappedBy = "item"
+            mappedBy = "item",
+            cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST}
             )
     private List<ItemPicture> itemPicture;
 
@@ -50,7 +48,6 @@ public class Item {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.imgPaths = imgPaths;
         this.key = key;
         this.incomeDate = incomeDate;
         this.storage = storage;
@@ -84,14 +81,6 @@ public class Item {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getImgPaths() {
-        return imgPaths;
-    }
-
-    public void setImgPaths(String imgPaths) {
-        this.imgPaths = imgPaths;
     }
 
     public String getKey() {
@@ -140,7 +129,6 @@ public class Item {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", imgPaths='" + imgPaths + '\'' +
                 ", key='" + key + '\'' +
                 ", incomeDate='" + incomeDate + '\'' +
                 ", storage=" + storage.getName() +

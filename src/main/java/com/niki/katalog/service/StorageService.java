@@ -48,4 +48,10 @@ public class StorageService implements IStorageService {
     public Storage find(int id) {
         return dao.find(id);
     }
+
+    @Override
+    @Transactional
+    public boolean isExistByName(String itemPlaceName) {
+        return dao.isExistByName(itemPlaceName);
+    }
 }

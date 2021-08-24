@@ -46,4 +46,10 @@ public class StorageController {
   public void deleteStorage(@PathVariable String storageName) {
     service.delete(storageName);
   }
+
+  @GetMapping("/isExist/{itemStorageName}")
+  public boolean isExistType(@PathVariable String itemStorageName) {
+    return  service.isExistByName(itemStorageName);
+  }
+
 }

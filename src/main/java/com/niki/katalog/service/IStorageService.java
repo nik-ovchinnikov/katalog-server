@@ -2,6 +2,7 @@ package com.niki.katalog.service;
 
 
 import com.niki.katalog.entity.Storage;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,4 +16,7 @@ public interface IStorageService {
     public void update(Storage storage);
 
     public Storage find(int id);
+
+    @Transactional
+    boolean isExistByName(String itemTypeName);
 }

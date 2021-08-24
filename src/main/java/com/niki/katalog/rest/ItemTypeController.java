@@ -34,6 +34,7 @@ public class ItemTypeController {
     public List<ItemType> getItemTypes() {
         return service.findAll();
     }
+
     @PutMapping("/updateItemType")
     public ItemType updateItemType(@RequestBody ItemType newItemType) {
         service.update(newItemType);
@@ -48,6 +49,11 @@ public class ItemTypeController {
     @GetMapping("/getById/{itemTypeId}")
     public ItemType getItemType(@PathVariable int itemTypeId) {
         return service.find(itemTypeId);
+    }
+
+    @GetMapping("/isExist/{itemTypeName}")
+    public boolean isExistType(@PathVariable String itemTypeName) {
+        return  service.isExistByName(itemTypeName);
     }
 
 }

@@ -3,6 +3,8 @@ package com.niki.katalog.service;
 import com.niki.katalog.entity.Item;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 public interface IItemService {
@@ -14,7 +16,7 @@ public interface IItemService {
 
     public int getIdByKey(String key);
 
-    public void update(Item item);
+    public void update(Item item) throws IOException;
 
     public Item find(int id);
 
@@ -22,4 +24,9 @@ public interface IItemService {
 
     @Transactional
     List<Item> getItemsByType(String typeName);
+
+    @Transactional
+    boolean isExistByKey(String itemKey);
+
+    boolean isExistByPhotoName(String photoName);
 }

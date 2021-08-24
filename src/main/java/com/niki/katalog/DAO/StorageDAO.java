@@ -1,6 +1,7 @@
 package com.niki.katalog.DAO;
 
 import com.niki.katalog.entity.Item;
+import com.niki.katalog.entity.ItemType;
 import com.niki.katalog.entity.Storage;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +76,20 @@ public class StorageDAO implements IStorageDAO {
     Session currentSession = entityManager.unwrap(Session.class);
     Storage storage = currentSession.get(Storage.class, id);
     return storage;
+  }
+
+  @Override
+  public boolean isExistByName(String itemPlaceName) {
+    Session currentSession = entityManager.unwrap(Session.class);
+    Query<ItemType> theQuery =
+            currentSession.createQuery("from Storage it where it.name = :curItemPlaceName");
+    theQuery.setParameter("curItemPlaceName", itemPlaceName);
+    List<ItemType> itemTypes = theQuery.getResultList();
+    if(itemTypes.size() > 0) {
+      return true;
+    }else {
+      return false;
+    }
+
   }
 }

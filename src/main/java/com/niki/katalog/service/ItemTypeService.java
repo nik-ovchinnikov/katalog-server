@@ -48,4 +48,12 @@ public class ItemTypeService implements IItemTypeService{
     public ItemType find(int id) {
         return dao.find(id);
     }
+
+    @Override
+    @Transactional
+    public boolean isExistByName(String itemTypeName) {
+       return dao.isExistByName(itemTypeName);
+    }
+
+
 }

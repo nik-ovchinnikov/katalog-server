@@ -15,16 +15,50 @@ public class ItemPicture {
     @Column(name = "NAME")
     private String name;
 
-    @JoinColumn(name = "ITEM_KEY")
+    @Column(name = "PREVIOUS_NAME")
+    private String previousName;
+
+    @Column(name = "TO_DELETE")
+    private boolean toDelete;
+
+    @JoinColumn(name = "ITEM_ID")
     @ManyToOne(
             fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL
+            cascade = {CascadeType.MERGE, CascadeType.REFRESH}
             )
     @JsonIgnore
     private Item item;
 
     @Column(name = "PATH")
     private String path;
+
+//    private File photo = null;
+//
+//    public File getPhoto() {
+//        return photo;
+//    }
+//
+//    public void setPhoto(File photo) {
+//        this.photo = photo;
+//    }
+//
+
+
+    public boolean isToDelete() {
+        return toDelete;
+    }
+
+    public void setToDelete(boolean toDelete) {
+        this.toDelete = toDelete;
+    }
+
+    public String getPreviousName() {
+        return previousName;
+    }
+
+    public void setPreviousName(String previousName) {
+        this.previousName = previousName;
+    }
 
     public int getId() {
         return id;
@@ -58,9 +92,11 @@ public class ItemPicture {
         this.path = path;
     }
 
-    public ItemPicture(int id, String name, Item item, String path) {
+    public ItemPicture(int id, String name, String previousName, boolean toDelete, Item item, String path) {
         this.id = id;
         this.name = name;
+        this.previousName = previousName;
+        this.toDelete = toDelete;
         this.item = item;
         this.path = path;
     }
@@ -73,7 +109,8 @@ public class ItemPicture {
         return "ItemPicture{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", item=" + item +
+                ", previousName='" + previousName + '\'' +
+                ", toDelete=" + toDelete +
                 ", path='" + path + '\'' +
                 '}';
     }

@@ -39,7 +39,7 @@ public class ItemTypeDAO implements IITemTypeDAO {
         ItemType itemTypeToDelete= (ItemType) query.getSingleResult();
         //Заменяеи на значение по умолчанию
         //Достаём предмет
-        query = currentSession.createQuery("from Item where itemType.itemTypeId = :recievedId");
+        query = currentSession.createQuery("from Item where itemType.id = :recievedId");
         query.setParameter("recievedId", itemTypeToDelete.getId());
         List<Item> items = query.getResultList();
         //На случай, если содержаться предметы данного типа
@@ -58,12 +58,14 @@ public class ItemTypeDAO implements IITemTypeDAO {
 
     @Override
     public void add(ItemType itemType) {
+        System.out.println(itemType);
         Session currentSession = entityManager.unwrap(Session.class);
         currentSession.save(itemType);
     }
 
     @Override
     public void update(ItemType newItemType) {
+        System.out.println(newItemType);
         Session currentSession = entityManager.unwrap(Session.class);
         currentSession.update(newItemType);
     }

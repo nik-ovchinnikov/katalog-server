@@ -38,6 +38,7 @@ public class StorageController {
 
   @PutMapping("/updateStorage")
   public Storage updateStorage(@RequestBody Storage newStorage) {
+    System.out.println(newStorage);
     service.update(newStorage);
     return newStorage;
   }

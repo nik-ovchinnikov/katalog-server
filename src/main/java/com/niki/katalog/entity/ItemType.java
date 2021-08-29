@@ -1,21 +1,17 @@
 package com.niki.katalog.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name="itemtypes")
 public class ItemType {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name= "ITEM_TYPE_ID")
-    private int itemTypeId;
+    @GeneratedValue(
+            strategy = GenerationType.IDENTITY
+    )
+    @Column(name= "ID")
+    private int id;
 
     @Column(name="name")
     private String name;
@@ -23,23 +19,22 @@ public class ItemType {
     @Column(name="description")
     private String description;
 
-
-
     public ItemType(int id, String name, String description) {
-        this.itemTypeId = id;
+        this.id = id;
         this.name = name;
         this.description = description;
     }
 
     public ItemType() {
+
     }
 
     public int getId() {
-        return itemTypeId;
+        return id;
     }
 
     public void setId(int id) {
-        this.itemTypeId = id;
+        this.id = id;
     }
 
     public String getName() {
@@ -61,7 +56,7 @@ public class ItemType {
     @Override
     public String toString() {
         return "ItemType{" +
-                "itemTypeId=" + itemTypeId +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 '}';

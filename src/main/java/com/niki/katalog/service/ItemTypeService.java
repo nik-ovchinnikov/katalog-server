@@ -33,6 +33,7 @@ public class ItemTypeService implements IItemTypeService{
     @Override
     @Transactional
     public void add(ItemType itemType) {
+        System.out.println(itemType);
         dao.add(itemType);
     }
 

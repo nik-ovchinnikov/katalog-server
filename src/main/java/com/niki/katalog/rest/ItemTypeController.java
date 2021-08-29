@@ -25,7 +25,8 @@ public class ItemTypeController {
 
     @PostMapping("/addItemType")
     public ItemType addItemType(@RequestBody ItemType itemType) {
-        itemType.setId(0);
+        System.out.println("addItemType");
+        itemType.setId(1);
         service.add(itemType);
         return itemType;
     }
@@ -37,6 +38,8 @@ public class ItemTypeController {
 
     @PutMapping("/updateItemType")
     public ItemType updateItemType(@RequestBody ItemType newItemType) {
+        System.out.println(newItemType);
+        System.out.println(324324);
         service.update(newItemType);
         return newItemType;
     }

@@ -14,6 +14,7 @@ public class FileStorageService {
     //адресс зранения файлов
     //его бы вынести в свойства глобальные, как и адрес БД
     private String storageRoot = "D:\\Workspace\\Projects\\Katalog\\photoStorage\\";
+   // private String storageRoot = "E:\\Workspace\\Projects\\Katalog\\Picture\\";
 
     //Загрузка полученного файла в хранилище
     public void fileUpload(MultipartFile file) throws IOException {
